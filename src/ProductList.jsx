@@ -10,6 +10,7 @@ function ProductList({ onHomeClick }) {
     const [addedToCart, setAddedToCart] = useState({});
     const dispatch = useDispatch();
     const totalQuantity = useSelector(state => state.cart.items.reduce((total, item) => total + item.quantity, 0))
+    const cart = useSelector(state => state.cart.items);
 
     const plantsArray = [
         {
@@ -239,6 +240,10 @@ function ProductList({ onHomeClick }) {
         textDecoration: 'none',
     }
 
+    const isInCart = (name) => {
+        return cart.some(item => item.name === name);
+    };
+
     const handleHomeClick = (e) => {
         e.preventDefault();
         onHomeClick();
@@ -307,24 +312,21 @@ function ProductList({ onHomeClick }) {
                                     fontWeight: "bold",
                                     width: "100%",
                                     padding: "10px 0"
-                                }}> <span style={{
-                                    width: "100%",
-                                    height: "2px",
-                                    backgroundColor: "#000",
-                                    marginBottom: "10px"
-                                }}></span>{category.category}<span style={{
-                                    width: "100%",
-                                    height: "2px",
-                                    backgroundColor: "#000",
-                                    marginTop: "10px"
-                                }}></span></div>
+                                }}>{category.category}</div>
                             </h1>
                             <div className="product-list">
                                 {category.plants.map((plant, plantIndex) => (
                                     <div className="product-card" key={plantIndex}>
-                                        <img src={plant.image} alt={plant.name} className="product-image" />
                                         <div className="product-title">{plant.name}</div>
-                                        <button className="product-button" onClick={() => handleAddToCart(plant)}>Add to Cart</button>
+                                        <img src={plant.image} alt={plant.name} className="product-image" />
+                                        <div className="product-price">{plant.cost}</div>
+                                        <div className="product-description" style={{fontStyle: "italic", fontWeight:'lighter',}}>{plant.description}</div>
+                                        <button
+                                            className={`product-button ${isInCart(plant.name) ? "added-to-cart" : ""}`}
+                                            onClick={() => handleAddToCart(plant)} 
+                                            disabled={isInCart(plant.name)}>
+                                            {isInCart(plant.name) ? "Added to Cart" : "Add to Cart"}
+                                        </button>
                                     </div>
                                 ))}
                             </div>
